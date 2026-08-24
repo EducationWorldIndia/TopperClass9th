@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Class 9th Study Portal</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{font-family:'Inter',sans-serif}.display{font-family:'Plus Jakarta Sans',sans-serif}
+.glass{backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}.shake{animation:shake.3s}
+</style>
+</head>
+<body class="bg-[#f8fafc] min-h-screen">
+<!-- BG -->
+<div class="fixed inset-0 -z-10 pointer-events-none"><div class="absolute -top-40 -left-40 w-[70%] h-[70%] bg-violet-200/40 blur- rounded-full"></div><div class="absolute -bottom-40 -right-40 w-[70%] h-[70%] bg-emerald-100/40 blur- rounded-full"></div></div>
+
+<!-- LOGIN - NO HINT -->
+<div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/20 backdrop-blur- transition-all duration-500">
+  <div id="loginCard" class="w-full max-w- bg-white rounded- p-8 shadow-2xl border">
+    <div class="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center mx-auto text-xl">🔒</div>
+    <h1 class="display text-2xl font-extrabold text-center mt-4">Class 9th Portal</h1>
+    <p class="text-center text- text-slate-500 mt-1 font-medium">Secure access only</p>
+    <form onsubmit="login(event)" class="mt-7">
+      <input id="passInput" type="password" placeholder="Enter Password" class="w-full h- rounded-2xl border border-slate-200 px-4 font-semibold outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100">
+      <p id="err" class="hidden mt-3 text- font-bold text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2">Incorrect Password!</p>
+      <button class="mt-4 w-full h- rounded-2xl bg-slate-900 text-white font-bold">Unlock →</button>
+    </form>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden opacity-0 transition-opacity duration-500">
+  <header class="sticky top-0 z-30 bg-white/80 glass border-b border-slate-200">
+    <div class="max-w- mx-auto px-5 h- flex items-center justify-between">
+      <div class="flex items-center gap-3"><div class="w-9 h-9 bg-slate-900 text-white rounded-xl flex items-center justify-center font-extrabold">9</div><h1 class="display font-extrabold">Class 9th Study Portal</h1></div>
+      <button onclick="logout()" class="h-9 px-4 rounded-full bg-white border text- font-semibold">Logout</button>
+    </div>
+  </header>
+
+  <main class="max-w- mx-auto px-5 py-8">
+    <!-- Breadcrumb -->
+    <div id="breadcrumb" class="flex items-center gap-2 text- font-medium text-slate-500 mb-6"></div>
+
+    <div id="view"></div>
+  </main>
+</div>
+
+<script>
+// ========= ADMIN EDIT - YAHAN VIDEO DAALO =========
+// Ctrl+F se "PASTE_HERE" search karo
+const studyData = {
+  science: {
+    title:"Science", icon:"🚀", gradient:"from-violet-600 to-indigo-700",
+    chapters:[
+      { name:"Ch 1: Matter in Our Surroundings", lectures:[
+        {title:"Lecture 1: Introduction", id:"A0Z4Z5N3x0I"}, // bhara hua example
+        {title:"Lecture 2: Properties", id:""}, // PASTE_HERE
+        {title:"Lecture 3", id:""}, {title:"Lecture 4", id:""}, {title:"Lecture 5", id:""},
+        {title:"Lecture 6", id:""}, {title:"Lecture 7", id:""}, {title:"Lecture 8", id:""},
+        {title:"Lecture 9", id:""}, {title:"Lecture 10: PYQs", id:""}
+      ]},
+      { name:"Ch 2: Is Matter Around Us Pure", lectures:Array.from({length:10},(_,i)=>({title:`Lecture ${i+1}`, id:i<2?"8mR_5W3U1yA":""})) },
+      { name:"Ch 3: Atoms and Molecules", lectures:Array.from({length:10},(_,i)=>({title:`Lecture ${i+1}`, id:""})) },
+      { name:"Ch 4: Structure of Atom", lectures:Array.from({length:10},(_,i)=>({title:`Lecture ${i+1}`, id:""})) },
+      { name:"Ch 5: The Fundamental Unit of Life", lectures:Array.from({length:10},(_,i)=>({title:`Lecture ${i+1}`, id:""})) },
+    ]
+  },
+  math: {
+    title:"Math", icon:"📐", gradient:"from-blue-600 to-cyan-600",
+    chapters:[
+      { name:"Ch 1: Number Systems", lectures:Array.from({length:10},(_,i)=>({title:`Lecture ${i+1}`, id:i==0?"t2Tvz2kh2Xg":""})) },
+      { name:"Ch 2: Polynomials", lectures:Array.from({length:10},(_,i)=>({title:`Lecture ${i+1}`, id:""})) },
+      { name:"Ch 3: Coordinate Geometry", lectures:Array.from({length:10},(_,i)=>({title:`Lecture ${i+1}`, id:""})) },
+      { name:"Ch 4: Linear Equations", lectures:Array.from({length:10},(_,i)=>({title:`Lecture ${i+1}`, id:""})) },
+      { name:"Ch 5: Euclid's Geometry", lectures:Array.from({length:10},(_,i)=>({title:`Lecture ${i+1}`, id:""})) },
+    ]
+  },
+  sst: {
+    title:"SST", icon:"🌍", gradient:"from-emerald-600 to-teal-700",
+    chapters:[
+      { name:"History Ch 1: French Revolution", lectures:Array.from({length:10},(_,i)=>({title:`Lecture ${i+1}`, id:i==0?"f4n9s2x1k3L":""})) },
+      { name:"Geography Ch 1: India - Size & Location", lectures:Array.from({length:10},(_,i)=>({title:`Lecture ${i+1}`, id:""})) },
+      { name:"Civics Ch 1: What is Democracy?", lectures:Array.from({length:10},(_,i)=>({title:`Lecture ${i+1}`, id:""})) },
+      { name:"Economics Ch 1: Story of Village Palampur", lectures:Array.from({length:10},(_,i)=>({title:`Lecture ${i+1}`, id:""})) },
+    ]
+  }
+};
+
+let state = { subject:null, chapter:null };
+const loginScreen=document.getElementById('loginScreen'), app=document.getElementById('app'), view=document.getElementById('view'), breadcrumb=document.getElementById('breadcrumb');
+
+function checkAuth(){ if(sessionStorage.getItem('c9_auth')==='yes'){ loginScreen.classList.add('hidden'); app.classList.remove('hidden'); setTimeout(()=>app.classList.remove('opacity-0'),10); renderSubjects(); } }
+function login(e){ e.preventDefault(); const p=document.getElementById('passInput').value; if(p==='920920'){ sessionStorage.setItem('c9_auth','yes'); loginScreen.classList.add('opacity-0'); setTimeout(()=>{loginScreen.classList.add('hidden'); app.classList.remove('hidden'); app.classList.remove('opacity-0'); renderSubjects();},300); } else { document.getElementById('err').classList.remove('hidden'); const c=document.getElementById('loginCard'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake'); } }
+function logout(){ sessionStorage.removeItem('c9_auth'); location.reload(); }
+
+function renderSubjects(){
+  state={subject:null,chapter:null}; breadcrumb.innerHTML=`<span class="font-bold text-slate-900">Subjects</span>`;
+  view.innerHTML=`<h2 class="display text- font-extrabold">Select Subject</h2><p class="text-slate-500 text- mt-1">Pahle subject chuno, phir chapter</p>
+  <div class="grid md:grid-cols-3 gap-5 mt-8">
+    ${Object.keys(studyData).map(k=>{ const s=studyData[k]; return `<button onclick="openSubject('${k}')" class="text-left rounded- bg-gradient-to-br ${s.gradient} p-7 text-white shadow-lg hover:-translate-y-1 transition-all"><div class="text-">${s.icon}</div><h3 class="display text- font-extrabold mt-4">${s.title}</h3><p class="text-white/70 text- mt-1">${s.chapters.length} Chapters • ${s.chapters.length*10} Lectures</p></button>` }).join('')}
+  </div>`;
+}
+
+function openSubject(key){
+  state.subject=key; const sub=studyData[key];
+  breadcrumb.innerHTML=`<button onclick="renderSubjects()" class="hover:text-slate-900">Subjects</button> <span>›</span> <span class="font-bold text-slate-900">${sub.title}</span>`;
+  view.innerHTML=`<div class="flex items-center gap-4"><div class="w-14 h-14 rounded-2xl bg-gradient-to-br ${sub.gradient} flex items-center justify-center text-2xl text-white shadow">${sub.icon}</div><div><h2 class="display text- font-extrabold">${sub.title}</h2><p class="text- text-slate-500">${sub.chapters.length} Chapters available</p></div></div>
+  <div class="grid md:grid-cols-2 gap-4 mt-8">
+    ${sub.chapters.map((ch,i)=>`<button onclick="openChapter(${i})" class="text-left bg-white border border-slate-200 rounded- p-5 hover:shadow-lg hover:-translate-y-0.5 transition-all flex items-center justify-between"><div><h3 class="font-bold text-">${ch.name}</h3><p class="text- text-slate-500 mt-1">${ch.lectures.filter(l=>l.id).length}/10 Lectures Added</p></div><span class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center">→</span></button>`).join('')}
+  </div>`;
+}
+
+function openChapter(idx){
+  state.chapter=idx; const sub=studyData[state.subject]; const ch=sub.chapters[idx];
+  breadcrumb.innerHTML=`<button onclick="renderSubjects()" class="hover:text-slate-900">Subjects</button> <span>›</span> <button onclick="openSubject('${state.subject}')" class="hover:text-slate-900">${sub.title}</button> <span>›</span> <span class="font-bold text-slate-900">${ch.name}</span>`;
+  view.innerHTML=`<button onclick="openSubject('${state.subject}')" class="h-9 px-4 rounded-full bg-white border text- font-semibold">← Back to Chapters</button>
+  <h2 class="display text- font-extrabold mt-6">${ch.name}</h2><p class="text- text-slate-500">Lecture 1 se 10 tak</p>
+  <div class="grid md:grid-cols-2 gap-5 mt-6">
+    ${ch.lectures.map((lec,i)=>{
+      if(!lec.id){ return `<div class="rounded- border-2 border-dashed border-slate-300 bg-slate-50/50 p-4 flex flex-col items-center justify-center min-h-"><div class="w-10 h-10 rounded-full bg-white border flex items-center justify-center text-slate-400">+</div><p class="font-bold text- mt-3">${lec.title || 'Lecture '+(i+1)}</p><p class="text- text-slate-400">Empty - Add ID in code</p></div>` }
+      return `<div class="rounded- bg-white border border-slate-200 overflow-hidden shadow-sm"><div class="aspect-video bg-slate-900"><iframe class="w-full h-full" src="https://www.youtube.com/embed/${lec.id}?rel=0" allowfullscreen loading="lazy"></iframe></div><div class="p-4 flex gap-3"><div class="w-7 h-7 rounded-full bg-slate-900 text-white flex items-center justify-center text- font-bold flex-shrink-0">${i+1}</div><h3 class="font-semibold text-[13.5px] leading-[1.3]">${lec.title}</h3></div></div>`
+    }).join('')}
+  </div>`;
+}
+
+checkAuth();
+</script>
+</body>
+</html>
